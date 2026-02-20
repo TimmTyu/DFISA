@@ -46,30 +46,41 @@ class DFISA:
             memdt = self.mem[self.fetch()]
             reg = self.fetch()
             self.regs[reg] = memdt
-        elif inst == 0xFA:  # stm i
+        elif inst == 0xFA: #stm i
             addr = self.fetch()
             num = self.fetch()
             self.mem[addr] = num
-        elif inst == 0xFB:  # stm r
+        elif inst == 0xFB: #stm r
             addr = self.fetch()
             reg = self.fetch()
             self.mem[addr] = self.regs[reg]
         elif inst == 0xF9: #syscall
             if self.regs[0] == 0xFA:
                 print(chr(self.regs[1]))
+        elif inst == 0xA8: #jmp a
+            addr = self.fetch()
+            self.pc = addr
+        elif inst == 0xD8: #jz a
+            addr = self.fetch()
+            if self.flags["ZF"] == 1:
+                self.pc = addr
+        elif inst == 0x8F: #jn a
+            addr = self.fetch()
+            if self.flags["NF"] == 1:
+                self.pc = addr
         elif inst == 0xFF: #halt
             self.running = 0
         else: #nop
             pass
-    def going(self):
+    def is_going(self):
         return(self.running)  
 C = DFISA([0x6A,0x00,0xFA,0x6A,0x01,0x41,0xF9,0xFF])
-while C.going():
+while C.is_going():
     C.exe()
 '''
 C = DFISA([0x6A,0x00,0xFA,0x6A,0x01,0x68,0xF9,0x6A,0x01,0x65,0xF9,0x6A,0x01,0x6C,0xF9,0x6A,
 0x01,0x6C,0xF9,0x6A,0x01,0x6F,0xF9,0x6A,0x01,0x20,0xF9,0x6A,0x01,0x77,0xF9,0x6A,0x01,0x6F,
 0xF9,0x6A,0x01,0x72,0xF9,0x6A,0x01,0x6C,0xF9,0x6A,0x01,0x64,0xF9,0x6A,0x01,0x0A,0xF9,0xFF])
-while C.going():
+while C.is_going():
     C.exe()
 '''
